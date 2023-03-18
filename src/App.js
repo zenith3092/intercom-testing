@@ -418,7 +418,7 @@ function App() {
   return (
     <div className="sip-block">
       <video
-        width="0.1%"
+        width="50%"
         id="localVideo"
         autoPlay
         playsInline
@@ -427,7 +427,7 @@ function App() {
       ></video>
       <video
         ref={(tag) => (remoteVideo.current = tag)}
-        width="0.1%"
+        width="50%"
         id="remoteVideo"
         autoPlay
         playsInline
