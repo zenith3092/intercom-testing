@@ -1,7 +1,7 @@
 {
-    "sipDomain": "10.0.0.23",
-    "sipServer": "wss://10.0.0.23:8089/ws",
-    "sipUser": "201",
-    "sipPassword": "******",
-    "destination": "202"
+    "sipDomain": "10.128.1.65",
+    "sipServer": "wss://10.128.1.65:8089/ws",
+    "sipUser": "100000002",
+    "sipPassword": "123456",
+    "destination": "1000@10.128.1.65"
 }
