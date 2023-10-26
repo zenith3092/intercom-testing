@@ -10,10 +10,6 @@ clone this repo
 
 ### Step2
 
-到 `config.json` 資料夾更改資料
-
-### Step3
-
 終端機執行：
 
 `npm install`
