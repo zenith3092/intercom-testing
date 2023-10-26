@@ -16,7 +16,7 @@ clone this repo
 
 `npm start`
 
-### Step4
+### Step3
 
 網頁會部署在：
 http://localhost:3000
