@@ -12,6 +12,41 @@ const IntercomForm = () => {
   const [password, setPassword] = useState("");
   const [settingShow, setSettingShow] = useState(false);
 
+  const handleConnect = () => {
+    if (!serverIp) {
+      alert("Please enter the Server IP");
+      return;
+    }
+    if (!serverPort) {
+      alert("Please enter the Server Port");
+      return;
+    }
+    if (!userName) {
+      alert("Please enter the User Name");
+      return;
+    }
+    if (!password) {
+      alert("Please enter the Password");
+      return;
+    }
+
+    dispatch(
+      updateConfig({
+        serverIp: serverIp,
+        serverPort: serverPort,
+        userName: userName,
+        password: password,
+      })
+    );
+    setSettingShow(false);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleConnect();
+    }
+  };
+
   return (
     <>
       <div className="page-title">
@@ -41,6 +76,7 @@ const IntercomForm = () => {
                 size="sm"
                 value={serverIp}
                 onChange={(event) => setServerIp(event.target.value)}
+                onKeyDown={(event) => handleKeyDown(event)}
               />
             </div>
             <div className="intercom-form-group">
@@ -49,6 +85,7 @@ const IntercomForm = () => {
                 size="sm"
                 value={serverPort}
                 onChange={(event) => setServerPort(event.target.value)}
+                onKeyDown={(event) => handleKeyDown(event)}
               />
             </div>
             <div className="intercom-form-group">
@@ -57,6 +94,7 @@ const IntercomForm = () => {
                 size="sm"
                 value={userName}
                 onChange={(event) => setUserName(event.target.value)}
+                onKeyDown={(event) => handleKeyDown(event)}
               />
             </div>
             <div className="intercom-form-group">
@@ -66,41 +104,11 @@ const IntercomForm = () => {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                onKeyDown={(event) => handleKeyDown(event)}
               />
               <div className="intercom-form-btn">
-                <Button
-                  size="sm"
-                  variant="dark"
-                  onClick={() => {
-                    if (!serverIp) {
-                      alert("Please enter the Server IP");
-                      return;
-                    }
-                    if (!serverPort) {
-                      alert("Please enter the Server Port");
-                      return;
-                    }
-                    if (!userName) {
-                      alert("Please enter the User Name");
-                      return;
-                    }
-                    if (!password) {
-                      alert("Please enter the Password");
-                      return;
-                    }
-
-                    dispatch(
-                      updateConfig({
-                        serverIp: serverIp,
-                        serverPort: serverPort,
-                        userName: userName,
-                        password: password,
-                      })
-                    );
-                    setSettingShow(false);
-                  }}
-                >
-                  Submit
+                <Button size="sm" variant="dark" onClick={handleConnect}>
+                  Connect
                 </Button>
               </div>
             </div>

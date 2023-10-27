@@ -8,6 +8,21 @@ const IntercomWidget = ({ browser, mediaTested, mediaSupported }) => {
 
   const [target, setTarget] = useState("");
 
+  const handleCall = () => {
+    if (!target && callState === "Idle") {
+      alert("Please enter the target");
+      return;
+    }
+    handleBtn(target);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleCall();
+    }
+  };
+
   return (
     <>
       <div className="intercom-widget">
@@ -34,18 +49,9 @@ const IntercomWidget = ({ browser, mediaTested, mediaSupported }) => {
                                 onChange={(event) =>
                                   setTarget(event.target.value)
                                 }
+                                onKeyDown={(event) => handleKeyDown(event)}
                               />
-                              <Button
-                                onClick={() => {
-                                  if (!target && callState === "Idle") {
-                                    alert("Please enter the target");
-                                    return;
-                                  }
-                                  handleBtn(target);
-                                }}
-                              >
-                                {btnTitle}
-                              </Button>
+                              <Button onClick={handleCall}>{btnTitle}</Button>
                             </Form.Group>
                           </Form.Group>
                         </Form>
