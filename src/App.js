@@ -42,13 +42,15 @@ function App() {
 
   return (
     <div className="page">
-      <IntercomForm />
-      <IntercomWidget
-        browser={browser}
-        mediaTested={mediaTested}
-        mediaSupported={mediaSupported}
-      />
-      <MediaGruop />
+      <div className="page-inner">
+        <IntercomForm />
+        <IntercomWidget
+          browser={browser}
+          mediaTested={mediaTested}
+          mediaSupported={mediaSupported}
+        />
+        <MediaGruop />
+      </div>
     </div>
   );
 }

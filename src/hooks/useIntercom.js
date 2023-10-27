@@ -9,8 +9,8 @@ var remoteStream;
 var localStream;
 var enableButtons = true;
 
-const alertVideoUrl = "/alert.mp3";
-const ringbackVideoUrl = "/waiting.mp3";
+const alertVideoUrl = "./alert.mp3";
+const ringbackVideoUrl = "./waiting.mp3";
 const destination = "1000";
 
 const useIntercom = () => {
