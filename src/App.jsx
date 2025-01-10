@@ -13,7 +13,6 @@ import axios from "axios";
 
 const App = () => {
     const {
-        sipUaRef,
         localVideoRef,
         remoteVideoRef,
         sessionRef,
@@ -98,14 +97,17 @@ const App = () => {
                                                 console.log(e);
                                             });
                                     }
+                                    // 須傳送呼叫訊息
                                 },
                                 onCallConnected: () => {
                                     incomingVideoRef.current.pause();
                                     outgoingVideoRef.current.pause();
+                                    // 須傳送接通訊息
                                 },
                                 onCallTerminated: () => {
                                     incomingVideoRef.current.pause();
                                     outgoingVideoRef.current.pause();
+                                    // 須傳送掛斷訊息
                                 },
                             },
                         });
