@@ -1,8 +1,20 @@
-# React + Vite
+# Intercom Testing for AI Security
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Environment Variables
 
-Currently, two official plugins are available:
+-   `VITE_SIP_IP`: SIP server IP address
+-   `VITE_SIP_WSS_PORT`: SIP server WSS port
+-   `VITE_SIP_PASSWORD`: SIP caller password
+-   `VITE_WEB_SERVER_URL`: Web server URL
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Start
+
+```bash
+npm run dev
+```
+
+If you want to expose your local ip:
+
+```bash
+npm run dev -- --host
+```
