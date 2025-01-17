@@ -1,15 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { SessionType, SessionState } from "./intercom-lib/intercom-enum";
+import {
+    SessionType,
+    SessionState,
+    ConnectionState,
+} from "./intercom-lib/intercom-enum";
 import useIntercom from "./intercom-lib/useIntercom";
 import {
     checkCallerAvailability,
+    checkQueueAvailability,
     forceToHangup,
 } from "./intercom-plug/intercom-api";
 import { Inviter, Invitation } from "sip.js";
+import { useErrMsg } from "./useErrMsg";
 import "./App.css";
-import axios from "axios";
 
-// 處理群播功能
+const SIP_IP = import.meta.env.VITE_SIP_IP;
+const SIP_WSS_PORT = import.meta.env.VITE_SIP_WSS_PORT;
+const SIP_PASSWORD = import.meta.env.VITE_SIP_PASSWORD;
 
 const App = () => {
     const {
@@ -29,10 +36,10 @@ const App = () => {
         putConfiguration,
     } = useIntercom();
 
-    const [userId, setUserId] = useState("admin");
-    const [username, setUsername] = useState("101000004");
-    const [password, setPassword] = useState("123456");
+    const [username, setUsername] = useState("9010");
+    const [password, setPassword] = useState(SIP_PASSWORD);
     const [callTarget, setCallTarget] = useState("101000001");
+    const { errMsg, putErrMsg } = useErrMsg();
 
     /**
      * @type {React.MutableRefObject<HTMLVideoElement>}
@@ -46,17 +53,13 @@ const App = () => {
     return (
         <div className="app-div">
             <input
-                placeholder="userId"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-            />
-            <input
                 placeholder="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
             />
             <input
                 placeholder="password"
+                type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
@@ -64,21 +67,19 @@ const App = () => {
                 <button
                     onClick={async () => {
                         await putConfiguration({
-                            serverIp: "10.0.0.120",
-                            serverWsPort: 8089,
+                            serverIp: SIP_IP,
+                            serverWsPort: Number(SIP_WSS_PORT),
                             serverWsEndpoint: "/ws",
                             transport: "wss",
                             autoRegister: true,
                             userId: username,
                             sipUsername: username,
                             sipPassword: password,
+                            logLevel: "error",
                             delegate: {
-                                onServerConnect: () => {
-                                    // 須傳送連線訊息
-                                },
-                                onServerDisconnect: () => {
-                                    // 須傳送斷線訊息
-                                },
+                                onRegistered: () => {},
+                                onServerConnect: () => {},
+                                onServerDisconnect: () => {},
                                 onCallCreated: () => {
                                     if (sessionRef.current instanceof Inviter) {
                                         outgoingVideoRef.current
@@ -97,17 +98,14 @@ const App = () => {
                                                 console.log(e);
                                             });
                                     }
-                                    // 須傳送呼叫訊息
                                 },
                                 onCallConnected: () => {
                                     incomingVideoRef.current.pause();
                                     outgoingVideoRef.current.pause();
-                                    // 須傳送接通訊息
                                 },
                                 onCallTerminated: () => {
                                     incomingVideoRef.current.pause();
                                     outgoingVideoRef.current.pause();
-                                    // 須傳送掛斷訊息
                                 },
                             },
                         });
@@ -121,7 +119,9 @@ const App = () => {
             </div>
             <br />
 
-            <h3>Call State: {connectionInfo.state}</h3>
+            {errMsg && <h2 style={{ color: "red" }}>{errMsg}</h2>}
+
+            <h3>Connection State: {connectionInfo.state}</h3>
             <h3>Register State: {registerInfo.state}</h3>
             <h3>Session State: {currentSessionInfo.state}</h3>
             <h3>
@@ -145,15 +145,29 @@ const App = () => {
                         <button
                             onClick={async () => {
                                 try {
-                                    const checkRes =
-                                        await checkCallerAvailability(
-                                            callTarget
-                                        );
-                                    if (!checkRes.data.indicator) {
-                                        alert(checkRes.data.message);
+                                    const targetType = "user"; // user or intercom
+                                    if (targetType === "user") {
+                                        const checkRes =
+                                            await checkQueueAvailability(
+                                                callTarget
+                                            );
+                                        if (!checkRes.data.indicator) {
+                                            putErrMsg(checkRes.data.message);
+                                            return;
+                                        }
+                                    } else {
+                                        const checkRes =
+                                            await checkCallerAvailability(
+                                                callTarget
+                                            );
+                                        if (!checkRes.data.indicator) {
+                                            putErrMsg(checkRes.data.message);
+                                            return;
+                                        }
                                     }
                                 } catch (error) {
-                                    alert(error);
+                                    console.log(error);
+                                    putErrMsg(error.message);
                                 }
 
                                 try {
@@ -161,10 +175,12 @@ const App = () => {
                                         callTarget
                                     );
                                     if (!hangupRes.data.indicator) {
-                                        alert(hangupRes.data.message);
+                                        putErrMsg(hangupRes.data.message);
+                                        return;
                                     }
                                 } catch (err) {
-                                    alert(err);
+                                    putErrMsg(err.message);
+                                    return;
                                 }
 
                                 handleCall(callTarget);

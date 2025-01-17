@@ -1,10 +1,6 @@
 import axios from "axios";
 
-const WEB_SERVER_URL = "http://127.0.0.1:5211";
-
-async function getConnectionStatus() {
-    return axios.get(WEB_SERVER_URL + "/api/sip/connection_status");
-}
+const WEB_SERVER_URL = import.meta.env.VITE_WEB_SERVER_URL;
 
 /**
  * @param {string} caller_id
@@ -16,7 +12,15 @@ async function checkCallerAvailability(caller_id) {
 }
 
 /**
- *
+ * @param {string} queue
+ */
+async function checkQueueAvailability(queue) {
+    return axios.get(WEB_SERVER_URL + "/api/sip/check_queue_availability", {
+        params: { queue },
+    });
+}
+
+/**
  * @param {string} caller_id
  */
 async function forceToHangup(caller_id) {
@@ -25,4 +29,4 @@ async function forceToHangup(caller_id) {
     });
 }
 
-export { getConnectionStatus, checkCallerAvailability, forceToHangup };
+export { checkCallerAvailability, forceToHangup, checkQueueAvailability };

@@ -443,6 +443,23 @@ function useIntercomObjects() {
         [delegate, registerInfo, setCurrentSessionInfo]
     );
 
+    const sameCheck = useCallback(() => {
+        if (!sipUaRef.current) {
+            return false;
+        }
+
+        return (
+            sipUaRef.current.configuration.authorizationUsername ===
+                registerInfo.sipUsername &&
+            sipUaRef.current.configuration.authorizationPassword ===
+                registerInfo.sipPassword &&
+            sipUaRef.current.configuration.transportOptions.server ===
+                `${connectionInfo.transport}://${connectionInfo.serverIp}:${connectionInfo.serverWsPort}${connectionInfo.serverWsEndpoint}` &&
+            sipUaRef.current.configuration.contactParams.transport ===
+                connectionInfo.transport
+        );
+    }, [sipUaRef, registerInfo, connectionInfo]);
+
     const setupLocalMedia = useCallback(() => {
         if (!sessionRef.current) {
             throw new Error("Session does not exist.");
@@ -728,6 +745,7 @@ function useIntercomObjects() {
                         );
                     });
                 } else if (sessionRef.current instanceof Invitation) {
+                    console.log("Invitation rejected1");
                     return sessionRef.current.reject().then(() => {
                         console.log(
                             `[${registerInfo.userId} (${registerInfo.sipUsername})] Invitation rejected (sent 480)`
@@ -751,6 +769,7 @@ function useIntercomObjects() {
                         );
                     });
                 } else if (sessionRef.current instanceof Invitation) {
+                    console.log("Invitation rejected2");
                     return sessionRef.current.reject().then(() => {
                         console.log(
                             `[${registerInfo.userId} (${registerInfo.sipUsername})] Invitation rejected (sent 480)`
@@ -776,6 +795,13 @@ function useIntercomObjects() {
     useEffect(() => {
         if (!initCheck()) {
             return;
+        }
+
+        if (!sameCheck()) {
+            if (sipUaRef.current) {
+                sipUaRef.current.stop();
+                sipUaRef.current = null;
+            }
         }
 
         if (!sipUaRef.current) {

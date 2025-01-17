@@ -5,9 +5,7 @@ import SuperApp from "./App.jsx";
 import { IntercomObjectsProvider } from "./intercom-lib/intercomContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <IntercomObjectsProvider>
-            <SuperApp />
-        </IntercomObjectsProvider>
-    </StrictMode>
+    <IntercomObjectsProvider>
+        <SuperApp />
+    </IntercomObjectsProvider>
 );
